@@ -20,6 +20,12 @@ Parser* create_parser(Lexer* lexer)
   return parser;
 }
 
+void destroy_parser(Parser* parser)
+{
+  destroy_lexer(parser->lexer);
+  free(parser);
+}
+
 void parser_eat(Parser* parser, int token_type)
 {
   if(parser->current_token->type == token_type)
@@ -48,10 +54,8 @@ AST* parser_parse_expression(Parser* parser)
   {
     case TOKEN_STRING : return parser_parse_string(parser);
     case TOKEN_ID : return parser_parse_id(parser);
-    default : return NULL;
+    default : return create_ast(AST_NOOP);
   }
-
-  return NULL;
 }
 
 AST* parser_parse_variable_defenition(Parser* parser)
@@ -61,7 +65,7 @@ AST* parser_parse_variable_defenition(Parser* parser)
   parser_eat(parser, TOKEN_ID);
   parser_eat(parser, TOKEN_EQUALS);
   AST* variable_value = parser_parse_expression(parser);
-  AST* variable_defenition = create_ast(AST_VARIABLE_DEFENITION);
+  AST* variable_defenition = create_ast(AST_VARIABLE_DEFINITION);
   variable_defenition->variable_name = variable_name;
   variable_defenition->variable_value = variable_value;
   return variable_defenition;
@@ -69,14 +73,15 @@ AST* parser_parse_variable_defenition(Parser* parser)
 
 AST* parser_parse_function_call(Parser* parser)
 {
-  parser_eat(parser, TOKEN_LEFT_PARENTHESIS);
-
   AST* function_call = create_ast(AST_FUNCTION_CALL);
   function_call->function_call_name = parser->previous_token->value;
   function_call->function_call_arguments = (AST**)calloc(1, sizeof(AST*));
 
+  parser_eat(parser, TOKEN_LEFT_PARENTHESIS);
+
   LOG_FAIL(function_call->function_call_arguments);
   function_call->function_call_arguments[0] = parser_parse_expression(parser);
+  function_call->function_call_arguments_count++;
 
   while(parser->current_token->type == TOKEN_COMMA)
   {
@@ -125,10 +130,8 @@ AST* parser_parse_statement(Parser* parser)
   switch(parser->current_token->type)
   {
     case TOKEN_ID : return parser_parse_id(parser);
-    default : return NULL;
+    default : return create_ast(AST_NOOP);
   }
-
-  return NULL;
 }
 
 AST* parser_parse_statements(Parser* parser)
@@ -138,13 +141,18 @@ AST* parser_parse_statements(Parser* parser)
   compound->compound_value = (AST**)calloc(1, sizeof(AST*));
   LOG_FAIL(compound->compound_value);
   compound->compound_value[0] = parser_parse_statement(parser);
+  compound->compound_count++;
 
   while(parser->current_token->type == TOKEN_SEMICOLON)
   {
     parser_eat(parser, TOKEN_SEMICOLON);
-    compound->compound_count++;
-    compound->compound_value = realloc(compound->compound_value, compound->compound_count * sizeof(AST*));
-    compound->compound_value[compound->compound_count - 1] = parser_parse_statement(parser);
+    AST* statement = parser_parse_statement(parser);
+    if(statement)
+    {
+      compound->compound_count++;
+      compound->compound_value = realloc(compound->compound_value, compound->compound_count * sizeof(AST*));
+      compound->compound_value[compound->compound_count - 1] = statement;
+    }
   }
 
   return compound;

@@ -19,7 +19,7 @@ Lexer* create_lexer(char* source_code)
 
 void destroy_lexer(Lexer* lexer)
 {
-  // free(lexer->source_code);
+  free(lexer->source_code);
   free(lexer);
 }
 

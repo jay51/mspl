@@ -1,0 +1,6 @@
+var name = "mspl!";
+write(name);
+
+var other = "This is a string!";
+var str3 = " and this is how it writes";
+write(other, str3);
