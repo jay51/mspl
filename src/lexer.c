@@ -114,6 +114,7 @@ Token* lexer_get_next_token(Lexer* lexer)
     {
       case '"' : return lexer_collect_string(lexer);
       case '=' : return lexer_advance_with_token(lexer, create_token(TOKEN_EQUALS, lexer_get_current_char_as_string(lexer)));
+      case ',' : return lexer_advance_with_token(lexer, create_token(TOKEN_COMMA, lexer_get_current_char_as_string(lexer)));
       case ';' : return lexer_advance_with_token(lexer, create_token(TOKEN_SEMICOLON, lexer_get_current_char_as_string(lexer)));
       case '(' : return lexer_advance_with_token(lexer, create_token(TOKEN_LEFT_PARENTHESIS, lexer_get_current_char_as_string(lexer)));
       case ')' : return lexer_advance_with_token(lexer, create_token(TOKEN_RIGHT_PARENTHESIS, lexer_get_current_char_as_string(lexer)));

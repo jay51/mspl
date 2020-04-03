@@ -5,10 +5,10 @@ int main(int argc, char const *argv[])
    print(name);";
 
   Lexer* lexer = create_lexer(source);
+  Parser* parser = create_parser(lexer);
+  AST* root = parser_parse(parser);
 
-  Token* token;
-  while((token = lexer_get_next_token(lexer))->type != TOKEN_EOF)
-    print_token(token);
+  printf("%d %ld\n", root->type, root->compound_count);
 
   destroy_lexer(lexer);
 

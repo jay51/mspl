@@ -12,4 +12,6 @@
 #include "log.c"
 #include "token.c"
 #include "lexer.c"
+#include "ast.c"
+#include "parser.c"
 #include "main.c"

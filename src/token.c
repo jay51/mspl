@@ -5,6 +5,7 @@ typedef struct
     TOKEN_ID,
     TOKEN_EQUALS,
     TOKEN_STRING,
+    TOKEN_COMMA,
     TOKEN_SEMICOLON,
     TOKEN_LEFT_PARENTHESIS,
     TOKEN_RIGHT_PARENTHESIS,
@@ -39,6 +40,7 @@ void print_token(const Token* token)
     case TOKEN_EQUALS : printf("TOKEN_EQUALS"); break;
     case TOKEN_STRING : printf("TOKEN_STRING"); break;
     case TOKEN_SEMICOLON : printf("TOKEN_SEMICOLON"); break;
+    case TOKEN_COMMA : printf("TOKEN_COMMA"); break;
     case TOKEN_LEFT_PARENTHESIS : printf("TOKEN_LEFT_PARENTHESIS"); break;
     case TOKEN_RIGHT_PARENTHESIS : printf("TOKEN_RIGHT_PARENTHESIS"); break;
     case TOKEN_EOF : printf("TOKEN_EOF"); break;
